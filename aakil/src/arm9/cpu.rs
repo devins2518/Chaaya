@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use super::utils::Cpsr;
+use super::{coprocessor::Cp15, utils::Cpsr};
 use crate::utils::{Endianness, Mode, Register};
 use crate::ARM_DERIVE;
 use crate::ARM_TRAIT;
@@ -14,6 +14,7 @@ pub(crate) struct Arm9 {
     mode: Mode,
     gp_registers: [Register; 31],
     program_registers: [Cpsr; 7],
+    cp15: Cp15,
 }
 
 impl Arm9 {
@@ -58,6 +59,7 @@ impl Arm9 {
             mode: Mode::User,
             gp_registers,
             program_registers: [Cpsr::default(); 7],
+            cp15: Cp15::new(),
         }
     }
 }

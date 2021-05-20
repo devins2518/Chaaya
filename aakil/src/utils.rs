@@ -31,6 +31,7 @@ impl DerefMut for Register {
     }
 }
 
+#[derive(BitfieldSpecifier, Debug)]
 pub(crate) enum Endianness {
     Big,
     Little,
