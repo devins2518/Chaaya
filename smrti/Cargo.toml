@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 tokio = { version = "1.4.0", features = ["sync"] }
+modular-bitfield = "0.11.2"
