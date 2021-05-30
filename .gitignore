@@ -1,2 +1,7 @@
-./*/target
-/target
+*~
+*.swp
+zig-cache/
+zig-out/
+
+.direnv/*
+!.direnv/.git-keep
