@@ -1,9 +1,12 @@
 #![allow(dead_code)]
+use std::future::Future;
+
 use super::{coprocessor::Cp15, utils::Cpsr};
 use crate::utils::{Endianness, Mode, Register};
 use crate::ARM_DERIVE;
 use crate::ARM_TRAIT;
 
+use genawaiter::{rc::Gen, sync::gen, sync_producer, yield_};
 use tokio::sync::mpsc;
 
 #[derive(ARM_DERIVE)]
