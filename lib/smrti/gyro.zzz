@@ -5,7 +5,7 @@ pkgs:
     license: MIT
     source_url: "https://github.com/taruntapan/Chaaya"
 
-    root: src/main.zig
+    root: src/lib.zig
     files:
       README.md
       LICENSE
