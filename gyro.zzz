@@ -1,0 +1,22 @@
+pkgs:
+  Chaaya:
+    version: 0.0.1
+    description: "An NDS emulator built in Zig"
+    license: MIT
+    source_url: "https://github.com/taruntapan/Chaaya"
+
+    root: src/main.zig
+    files:
+      README.md
+      LICENSE
+
+deps:
+  aakil:
+    root: src/lib.zig
+    src: local: "lib/aakil"
+  dasmaya:
+    root: src/lib.zig
+    src: local: "lib/dasmaya"
+  smrti:
+    root: src/lib.zig
+    src: local: "lib/smrti"

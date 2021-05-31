@@ -2,6 +2,11 @@
 *.swp
 zig-cache/
 zig-out/
+*/gyro.lock
+*/gyro
+*/deps.zig
+# gyro bug
+**/ok
 
 .direnv/*
 !.direnv/.git-keep
