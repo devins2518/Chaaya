@@ -1,12 +1,4 @@
-const std = @import("std");
-const testing = std.testing;
-
-pub const cpu = @import("cpu.zig");
-
-export fn add(a: i32, b: i32) i32 {
-    return a + b;
-}
-
-test "basic add functionality" {
-    try testing.expect(add(3, 7) == 10);
-}
+// Ugh I really want to have feature compilation instead of having a DS struct and a
+// GBA ready struct :despair:. Maybe zig already optimizes this out
+pub const ds_cpu = @import("cpu.zig").Ds_Cpu;
+pub const gba_cpu = @import("cpu.zig").Gba_Cpu;
