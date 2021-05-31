@@ -12,8 +12,7 @@ gyro build
 ```
 Run:
 ```sh
-gyro build
-zig run src/main.zig
+gyro build run
 ```
 
 ### Why Zig?
