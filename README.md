@@ -1,5 +1,21 @@
 # Chaaya: An NDS Emulator Built in Zig
 
+## Build
+This project uses [gyro](https://github.com/mattnite/gyro) for zig package management. NixOS
+users can install from my custom derivation
+[here](https://github.com/devins2518/dotfiles/blob/surface/overlays/gyro.nix). There is an AUR
+package for Arch users as well.
+
+Build:
+```sh
+gyro build
+```
+Run:
+```sh
+gyro build
+zig run src/main.zig
+```
+
 ### Why Zig?
 I originally wrote this in Rust since it was the language which I was most comfortable writing
 stuff in that. However, the memory management model of Rust made it a bit difficult to me to
