@@ -13,5 +13,7 @@ test "test registers" {
 }
 
 test "test opcodes" {
-    debug.assert(cpu.arm7.process_opcode(0xE0000000));
+    cpu.arm7.processOpcode(0xEF000000);
+    cpu.arm7.processOpcode(0xE0000000);
+    try testing.expect(cpu.arm7.clocks_completed == 2);
 }

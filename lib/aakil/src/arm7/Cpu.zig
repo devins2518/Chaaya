@@ -1,3 +1,4 @@
+const std = @import("std");
 pub const Arm7 = @This();
 
 r0: u32 = 0,
@@ -33,6 +34,14 @@ r13_und: u32 = 0,
 r14_und: u32 = 0,
 
 cpsr: Cpsr = Cpsr.init(),
+spsr_fiq: Cpsr = Cpsr.init(),
+spsr_svc: Cpsr = Cpsr.init(),
+spsr_abt: Cpsr = Cpsr.init(),
+spsr_irq: Cpsr = Cpsr.init(),
+spsr_und: Cpsr = Cpsr.init(),
+
+clocks_left: u64 = 0,
+clocks_completed: u64 = 0,
 
 state: enum(u1) {
     Arm,
@@ -44,6 +53,11 @@ const Cpsr = packed struct {
     n: u1 = 0,
     z: u1 = 0,
     v: u1 = 0,
+    _: u21 = 0,
+    irq_disalbe: u1 = 0,
+    fiq_disable: u1 = 0,
+    state: u1 = 0,
+    mode_bits: u4 = 0,
 
     fn init() Cpsr {
         return Cpsr{};
@@ -61,13 +75,13 @@ const Cpsr = packed struct {
             0x7 => self.v == 0,
             0x8 => (self.c == 1) and (self.z == 0),
             0x9 => (self.c == 0) or (self.z == 1),
-            0xa => self.n == self.v,
+            0xA => self.n == self.v,
             // TODO: verify that this is actually what its supposed to do
-            0xb => self.n != self.v,
-            0xc => (self.z == 0) and (self.n == self.v),
-            0xd => (self.z == 1) or (self.n != self.v),
-            0xe => true,
-            0xf => false,
+            0xB => self.n != self.v,
+            0xC => (self.z == 0) and (self.n == self.v),
+            0xD => (self.z == 1) or (self.n != self.v),
+            0xE => true,
+            0xF => false,
         };
     }
 };
@@ -77,6 +91,12 @@ pub fn init() Arm7 {
 }
 
 // maybe !void? idk
-pub fn process_opcode(self: *Arm7, opcode: u32) bool {
-    return self.cpsr.parse_cpsr_code(@truncate(u4, opcode >> 28));
+pub fn processOpcode(self: *Arm7, opcode: u32) void {
+    if (self.cpsr.parse_cpsr_code(@truncate(u4, opcode >> 28))) {
+        switch (@truncate(u28, opcode)) {
+            0xF000000...0xFFFFFFF => std.debug.print("Software interupt called at address: 0x{X:0>6}\n", .{@truncate(u24, opcode)}),
+            else => std.debug.print("Unhandled opcode: 0x{X}\n", .{@bitCast(u32, opcode)}),
+        }
+    }
+    self.clocks_completed += 1;
 }
