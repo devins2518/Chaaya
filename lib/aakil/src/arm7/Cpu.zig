@@ -1,4 +1,5 @@
 const std = @import("std");
+const utils = @import("../utils.zig");
 pub const Arm7 = @This();
 
 r0: u32 = 0,
@@ -91,11 +92,12 @@ pub fn init() Arm7 {
 }
 
 // maybe !void? idk
-pub fn processOpcode(self: *Arm7, opcode: u32) void {
-    if (self.cpsr.parse_cpsr_code(@truncate(u4, opcode >> 28))) {
-        switch (@truncate(u28, opcode)) {
-            0xF000000...0xFFFFFFF => std.debug.print("Software interupt called at address: 0x{X:0>6}\n", .{@truncate(u24, opcode)}),
-            else => std.debug.print("Unhandled opcode: 0x{X}\n", .{@bitCast(u32, opcode)}),
+pub fn processOpcode(self: *Arm7, instruction: u32) void {
+    const opcode = utils.Opcode.init(instruction);
+    if (self.cpsr.parse_cpsr_code(opcode.condition)) {
+        switch (@truncate(u28, instruction)) {
+            0xF000000...0xFFFFFFF => std.debug.print("Software interupt called at address: 0x{X:0>6}\n", .{@truncate(u24, instruction)}),
+            else => std.debug.print("Unhandled opcode: 0x{X}\n", .{@bitCast(u32, instruction)}),
         }
     }
     self.clocks_completed += 1;
