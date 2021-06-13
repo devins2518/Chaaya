@@ -102,3 +102,8 @@ pub fn processOpcode(self: *Arm7, instruction: u32) void {
     }
     self.clocks_completed += 1;
 }
+
+// Tests
+test {
+    std.testing.refAllDecls(@This());
+}

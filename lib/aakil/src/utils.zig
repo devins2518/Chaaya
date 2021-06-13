@@ -1,3 +1,5 @@
+const std = @import("std");
+
 pub const Opcode = packed struct {
     const Self = @This();
 
@@ -36,3 +38,8 @@ const InstructionType = enum {
     mul_add,
     umul_long,
 };
+
+// Tests
+test {
+    std.testing.refAllDecls(@This());
+}

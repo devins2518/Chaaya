@@ -1,3 +1,4 @@
+const std = @import("std");
 const arm7 = @import("arm7/Cpu.zig");
 
 pub const Ds_Cpu = struct {
@@ -12,3 +13,8 @@ pub const Gba_Cpu = struct {
         return Gba_Cpu{ .arm7 = arm7.Arm7.init() };
     }
 };
+
+// Tests
+test {
+    std.testing.refAllDecls(@This());
+}
