@@ -10,5 +10,13 @@ pub const pkgs = struct {
     }
 };
 
+pub const exports = struct {
+    pub const aakil = std.build.Pkg{
+        .name = "aakil",
+        .path = "src/lib.zig",
+        .dependencies = &.{
+        },
+    };
+};
 pub const base_dirs = struct {
 };

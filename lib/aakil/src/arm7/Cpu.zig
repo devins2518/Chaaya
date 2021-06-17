@@ -55,7 +55,7 @@ const Cpsr = packed struct {
     z: u1 = 0,
     v: u1 = 0,
     _: u21 = 0,
-    irq_disalbe: u1 = 0,
+    irq_disable: u1 = 0,
     fiq_disable: u1 = 0,
     state: u1 = 0,
     mode_bits: u4 = 0,
@@ -64,7 +64,7 @@ const Cpsr = packed struct {
         return Cpsr{};
     }
 
-    fn parse_cpsr_code(self: Cpsr, code: u4) bool {
+    fn parseCpsrCode(self: Cpsr, code: u4) bool {
         return switch (code) {
             0x0 => self.z == 1,
             0x1 => self.z == 0,
@@ -94,7 +94,7 @@ pub fn init() Arm7 {
 // maybe !void? idk
 pub fn processOpcode(self: *Arm7, instruction: u32) void {
     const opcode = utils.Opcode.init(instruction);
-    if (self.cpsr.parse_cpsr_code(opcode.condition)) {
+    if (self.cpsr.parseCpsrCode(opcode.condition)) {
         switch (@truncate(u28, instruction)) {
             0xF000000...0xFFFFFFF => std.debug.print("Software interupt called at address: 0x{X:0>6}\n", .{@truncate(u24, instruction)}),
             else => std.debug.print("Unhandled opcode: 0x{X}\n", .{@bitCast(u32, instruction)}),

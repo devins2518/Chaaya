@@ -25,6 +25,17 @@ pub const pkgs = struct {
     }
 };
 
+pub const exports = struct {
+    pub const Chaaya = std.build.Pkg{
+        .name = "Chaaya",
+        .path = "src/main.zig",
+        .dependencies = &.{
+            pkgs.aakil,
+            pkgs.dasmaya,
+            pkgs.smrti,
+        },
+    };
+};
 pub const base_dirs = struct {
     pub const aakil = "lib/aakil";
     pub const dasmaya = "lib/dasmaya";
