@@ -148,7 +148,23 @@ pub fn clock(self: *Self) void {
     0xFFFFFFFF);
 }
 
-pub fn adc(self: *Self, rd: u32, op2: u32) void {}
+// Data processing
+pub fn andi(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn eor(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn sub(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn rsb(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn add(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn adc(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn sbc(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn rsc(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn tst(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn teq(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn cmp(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn cmn(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn orr(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn mov(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn bic(self: *Self, rd: u32, op1: u32, op2: u32) void {}
+pub fn mvn(self: *Self, rd: u32, op1: u32, op2: u32) void {}
 
 // Tests
 test {
