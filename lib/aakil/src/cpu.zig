@@ -1,16 +1,16 @@
 const std = @import("std");
-const arm7 = @import("arm7/Cpu.zig");
+const Arm7 = @import("arm7/Cpu.zig");
 
-pub const Ds_Cpu = struct {
-    arm7: arm7,
+pub const DsCpu = struct {
+    arm7: Arm7,
     //arm9: arm9
 };
 
-pub const Gba_Cpu = struct {
-    arm7: arm7,
+pub const GbaCpu = struct {
+    arm7: Arm7 = Arm7.init(),
 
-    pub fn init() Gba_Cpu {
-        return Gba_Cpu{ .arm7 = arm7.Arm7.init() };
+    pub fn init() GbaCpu {
+        return GbaCpu{};
     }
 };
 

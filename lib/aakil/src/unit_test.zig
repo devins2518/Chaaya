@@ -14,7 +14,12 @@ test "test registers" {
 
 test "test opcodes" {
     cpu.arm7.processOpcode(0xEF000000);
-    cpu.arm7.processOpcode(0xE0000000);
-    cpu.arm7.processOpcode(0xF0000000);
-    try testing.expect(cpu.arm7.clocks_completed == 3);
+    cpu.arm7.processOpcode(0xEF000000);
+    cpu.arm7.processOpcode(0xEF000000);
+    cpu.arm7.processOpcode(0xEF000000);
+    try testing.expect(cpu.arm7.clocks_completed == 4);
+}
+
+test "test clock" {
+    cpu.arm7.clock();
 }

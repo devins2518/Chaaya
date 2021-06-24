@@ -1,6 +1,7 @@
 const std = @import("std");
 const utils = @import("../utils.zig");
-pub const Arm7 = @This();
+pub const Self = @This();
+const assert = std.debug.assert;
 
 r0: u32 = 0,
 r1: u32 = 0,
@@ -34,6 +35,11 @@ r14_irq: u32 = 0,
 r13_und: u32 = 0,
 r14_und: u32 = 0,
 
+// TODO: verify that u8 will be enough. I'm guessing yes since max added clocks is 3S+1N
+// and it's reset after every "full" clock cycle
+clocks_left: u64 = 0,
+clocks_completed: u64 = 0,
+
 cpsr: Cpsr = Cpsr.init(),
 spsr_fiq: Cpsr = Cpsr.init(),
 spsr_svc: Cpsr = Cpsr.init(),
@@ -41,8 +47,7 @@ spsr_abt: Cpsr = Cpsr.init(),
 spsr_irq: Cpsr = Cpsr.init(),
 spsr_und: Cpsr = Cpsr.init(),
 
-clocks_left: u64 = 0,
-clocks_completed: u64 = 0,
+// mem: file =???
 
 state: enum(u1) {
     Arm,
@@ -87,21 +92,63 @@ const Cpsr = packed struct {
     }
 };
 
-pub fn init() Arm7 {
-    return Arm7{};
+pub fn init() Self {
+    return Self{};
 }
 
 // maybe !void? idk
-pub fn processOpcode(self: *Arm7, instruction: u32) void {
+pub fn processOpcode(self: *Self, instruction: u32) void {
     const opcode = utils.Opcode.init(instruction);
     if (self.cpsr.parseCpsrCode(opcode.condition)) {
-        switch (@truncate(u28, instruction)) {
-            0xF000000...0xFFFFFFF => std.debug.print("Software interupt called at address: 0x{X:0>6}\n", .{@truncate(u24, instruction)}),
-            else => std.debug.print("Unhandled opcode: 0x{X}\n", .{@bitCast(u32, instruction)}),
+        const si = @truncate(u28, instruction);
+        const ssi = @truncate(u24, instruction);
+        switch (@truncate(u4, (instruction >> 24))) {
+            // https://github.com/ziglang/zig/issues/358 :despair:
+            0x0 => {
+                std.debug.print("Multiply instruction 0x{}\n", .{ssi});
+                assert(@truncate(u4, (instruction >> 4)) == 0x9);
+                switch (@truncate(u4, (instruction >> 20))) {
+                    0x0...0x1 => std.debug.print("multiply: 0x{X}\n", .{si}),
+                    0x4...0x7 => std.debug.print("multiply long: 0x{X}\n", .{si}),
+
+                    else => std.debug.print("Unhandled multiply opcode: 0x{X}\n", .{si}),
+                }
+            },
+            0x1 => {
+                std.debug.print("sds or bxe 0x{}\n", .{ssi});
+                switch (@truncate(u1, (instruction >> 20))) {
+                    0b0 => std.debug.print("sds 0x{}", .{ssi}),
+                    0b1 => std.debug.print("bex 0x{}", .{ssi}),
+                }
+            },
+            0x6...0x7 => std.debug.print("undefined opcode 0x{}", .{ssi}),
+            0x8...0x9 => std.debug.print("block data transfer 0x{}", .{ssi}),
+            0xA...0xB => std.debug.print("branch 0x{}", .{ssi}),
+            // TODO
+            // Coprocessor functions (shouldn't be necessary?)
+            0xC...0xE => std.debug.print("coprocessor function 0x{}", .{ssi}),
+            0xF => std.debug.print("Software interrupt 0x{}", .{ssi}),
+            else => {
+                switch (@truncate(u4, (instruction >> 20))) {
+                    else => std.debug.print("Unhandled opcode: 0x{X}\n", .{si}),
+                }
+            },
         }
     }
     self.clocks_completed += 1;
 }
+
+// TODO: attach memory modules
+pub fn clock(self: *Self) void {
+    while (self.clocks_left > 0) {
+        // continue
+    }
+    self.processOpcode(
+    // TODO
+    0xFFFFFFFF);
+}
+
+pub fn adc(self: *Self, rd: u32, op2: u32) void {}
 
 // Tests
 test {
