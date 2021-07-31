@@ -43,68 +43,64 @@ pub fn arm_derive(input: TokenStream) -> TokenStream {
     let name = &input.ident;
 
     let expanded = quote! {
-    impl ARM_TRAIT for #name {
-        fn decode(&mut self, opcode: u32) {
-            if false == self.program_registers[0].parse_condition_code(opcode) {
-                return
+        impl ARM_TRAIT for #name {
+            fn decode(&mut self, opcode: u32) {
+                if self.program_registers[0].parse_condition_code(opcode) {
+                    let halfword = (opcode | 0x00000010);
+
+                    #[cfg(debug_assertions)]
+                    println!("opcode {:#04b}", opcode);
+                    println!("halfword {:#04b}", halfword);
+                }
             }
 
-            // MUL/MLA Opcode masking
-            let halfword = (opcode | 0x00000010);
+            fn logical_and(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = *self.gp_registers[rn] & op2;
+            }
 
-            #[cfg(debug_assertions)]
-            println!("opcode {:#04b}", opcode);
-            println!("halfword {:#04b}", halfword);
+            fn logical_xor(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = *self.gp_registers[rn] ^ op2;
+            }
 
-        }
+            fn sub(&mut self, rd: usize, rn: usize, op2: u32) {
+                // (*self.gp_registers[rd], wrap) = *self.gp_registers[rn].overflowing_sub(op2);
+            }
 
-        fn logical_and(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = *self.gp_registers[rn] & op2;
-        }
+            fn rev_sub(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = op2 - *self.gp_registers[rn]
+            }
 
-        fn logical_xor(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = *self.gp_registers[rn] ^ op2;
-        }
+            fn add(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = *self.gp_registers[rn] + op2;
+            }
 
-        fn sub(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = *self.gp_registers[rn] - op2;
-        }
+            fn add_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = *self.gp_registers[rn] + op2 + self.program_registers[0].carry() as u32;
+            }
 
-        fn rev_sub(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = op2 - *self.gp_registers[rn]
-        }
+            fn sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = *self.gp_registers[rn] - op2 + self.program_registers[0].carry() as u32 - 1;
+            }
 
-        fn add(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = *self.gp_registers[rn] + op2;
-        }
+            fn rev_sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+                *self.gp_registers[rd] = op2 - *self.gp_registers[rn] + self.program_registers[0].carry() as u32 - 1;
+            }
 
-        fn add_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = *self.gp_registers[rn] + op2 + self.program_registers[0].carry() as u32;
-        }
+            //fn test_and(&mut self, rn: usize, op2: u32) {
+                //*self.gp_registers[rn] & op2;
+            //}
 
-        fn sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = *self.gp_registers[rn] - op2 + self.program_registers[0].carry() as u32 - 1;
-        }
+            //fn test_xor(&mut self, rn: usize, op2: u32) {
+                //*self.gp_registers[rn] ^ op2;
+            //}
 
-        fn rev_sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
-            *self.gp_registers[rd] = op2 - *self.gp_registers[rn] + self.program_registers[0].carry() as u32 - 1;
-        }
+            //fn test_sub(&mut self, rn: usize, op2: u32) {
+                //*self.gp_registers[rn] - op2;
+            //}
 
-        //fn test_and(&mut self, rn: usize, op2: u32) {
-            //*self.gp_registers[rn] & op2;
-        //}
-
-        //fn test_xor(&mut self, rn: usize, op2: u32) {
-            //*self.gp_registers[rn] ^ op2;
-        //}
-
-        //fn test_sub(&mut self, rn: usize, op2: u32) {
-            //*self.gp_registers[rn] - op2;
-        //}
-
-        //fn comp_neg(&mut self, rn: usize, op2: u32) {
-            //*self.gp_registers[rn] + op2;
-        //}
+            //fn comp_neg(&mut self, rn: usize, op2: u32) {
+                //*self.gp_registers[rn] + op2;
+            //}
         }
     };
 

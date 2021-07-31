@@ -4,16 +4,15 @@ use modular_bitfield::prelude::*;
 #[bitfield]
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct Cpsr {
-    pub(crate) negative: B1,        // N
-    pub(crate) zero: B1,            // Z
-    pub(crate) carry: B1,           // C
-    pub(crate) overflow: B1,        // V
-    pub(crate) sticky_overflow: B1, // Q
-    pub(crate) reserved: B20,       // Reserved
-    pub(crate) irq_mask: B1,        // I
-    pub(crate) firq_mask: B1,       // F
-    pub(crate) thumb_mode: B1,      // T
-    pub(crate) mode: B4,
+    pub(crate) negative: B1,   // N
+    pub(crate) zero: B1,       // Z
+    pub(crate) carry: B1,      // C
+    pub(crate) overflow: B1,   // V
+    pub(crate) reserved: B20,  // Reserved
+    pub(crate) irq_mask: B1,   // I
+    pub(crate) fiq_mask: B1,   // F
+    pub(crate) thumb_mode: B1, // T
+    pub(crate) mode: B5,
 }
 
 impl Cpsr {

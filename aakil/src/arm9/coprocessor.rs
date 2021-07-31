@@ -14,12 +14,9 @@ pub(super) struct Cp15 {
 
 impl Cp15 {
     pub(super) fn new() -> Self {
-        let mut main_id_reg = Register::new("Main ID Register");
-        main_id_reg.value = 0x41059461;
-        let mut cache_type_reg = Register::new("Cache Type Register");
-        cache_type_reg.value = 0x0F0D2112;
-        let mut tcm_size_reg = Register::new("TCM Size Register");
-        tcm_size_reg.value = 0x00140180;
+        let mut main_id_reg = Register::new(0x41059461);
+        let mut cache_type_reg = Register::new(0x0F0D2112);
+        let mut tcm_size_reg = Register::new(0x00140180);
         let control_reg = ControlRegister::from(0x00000078);
         let protection_unit = ProtectionUnit {};
         Self {

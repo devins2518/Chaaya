@@ -9,5 +9,7 @@ edition = "2018"
 [dependencies]
 tokio = { version = "1.4.0", features = ["full"] }
 modular-bitfield = "0.11.2"
-genawaiter = "0.99.1"
 aakil_derives = { path = "aakil_derives" }
+
+[features]
+gba = []

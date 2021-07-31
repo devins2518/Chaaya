@@ -6,7 +6,6 @@ use crate::ARM_TRAIT;
 
 use tokio::sync::mpsc;
 
-#[derive(ARM_DERIVE)]
 pub(crate) struct Arm7 {
     fifo_send: mpsc::Sender<()>,
     fifo_recv: mpsc::Receiver<()>,
@@ -18,39 +17,7 @@ pub(crate) struct Arm7 {
 
 impl Arm7 {
     pub(crate) fn new(receiver: mpsc::Receiver<()>, send: mpsc::Sender<()>) -> Self {
-        let gp_registers = [
-            Register::new("R00"),
-            Register::new("R01"),
-            Register::new("R02"),
-            Register::new("R03"),
-            Register::new("R04"),
-            Register::new("R05"),
-            Register::new("R06"),
-            Register::new("R07"),
-            Register::new("R08"),
-            Register::new("R09"),
-            Register::new("R10"),
-            Register::new("R11"),
-            Register::new("R12"),
-            Register::new("R13/SP"),
-            Register::new("R14/LR"),
-            Register::new("R15/PC"), // R15 is always used as the PC
-            Register::new("R08_fiq"),
-            Register::new("R09_fiq"),
-            Register::new("R10_fiq"),
-            Register::new("R11_fiq"),
-            Register::new("R12_fiq"),
-            Register::new("R13_fiq"),
-            Register::new("R14_fiq"),
-            Register::new("R13_svc"),
-            Register::new("R14_svc"),
-            Register::new("R13_abt"),
-            Register::new("R14_abt"),
-            Register::new("R13_irq"),
-            Register::new("R14_irq"),
-            Register::new("R13_und"),
-            Register::new("R14_und"),
-        ];
+        let gp_registers = [Register::new(0); 31];
         Arm7 {
             fifo_send: send,
             fifo_recv: receiver,
@@ -60,6 +27,69 @@ impl Arm7 {
             program_registers: [Cpsr::default(); 7],
         }
     }
+}
+impl ARM_TRAIT for Arm7 {
+    fn decode(&mut self, opcode: u32) {
+        if self.program_registers[0].parse_condition_code(opcode) {
+            #[cfg(debug_assertions)]
+            println!("opcode {:#04b}", opcode);
+        }
+    }
+
+    fn logical_and(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] = *self.gp_registers[rn] & op2;
+    }
+
+    fn logical_xor(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] = *self.gp_registers[rn] ^ op2;
+    }
+
+    fn sub(&mut self, rd: usize, rn: usize, op2: u32) {
+        let (val, wrap) = self.gp_registers[rn].overflowing_sub(op2);
+        *self.gp_registers[rd] = val;
+        if wrap {
+            self.program_registers[0].set_overflow(true);
+        }
+    }
+
+    fn rev_sub(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] = op2 - *self.gp_registers[rn]
+    }
+
+    fn add(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] = *self.gp_registers[rn] + op2;
+    }
+
+    fn add_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] =
+            *self.gp_registers[rn] + op2 + self.program_registers[0].carry() as u32;
+    }
+
+    fn sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] =
+            *self.gp_registers[rn] - op2 + self.program_registers[0].carry() as u32 - 1;
+    }
+
+    fn rev_sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] =
+            op2 - *self.gp_registers[rn] + self.program_registers[0].carry() as u32 - 1;
+    }
+
+    //fn test_and(&mut self, rn: usize, op2: u32) {
+    //*self.gp_registers[rn] & op2;
+    //}
+
+    //fn test_xor(&mut self, rn: usize, op2: u32) {
+    //*self.gp_registers[rn] ^ op2;
+    //}
+
+    //fn test_sub(&mut self, rn: usize, op2: u32) {
+    //*self.gp_registers[rn] - op2;
+    //}
+
+    //fn comp_neg(&mut self, rn: usize, op2: u32) {
+    //*self.gp_registers[rn] + op2;
+    //}
 }
 
 #[test]
