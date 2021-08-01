@@ -54,6 +54,8 @@ pub fn arm_derive(input: TokenStream) -> TokenStream {
                 }
             }
 
+            fn reset(&mut self) {}
+
             fn logical_and(&mut self, rd: usize, rn: usize, op2: u32) {
                 *self.gp_registers[rd] = *self.gp_registers[rn] & op2;
             }

@@ -13,3 +13,4 @@ aakil_derives = { path = "aakil_derives" }
 
 [features]
 gba = []
+ds = []

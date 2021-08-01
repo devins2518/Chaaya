@@ -1,6 +1,8 @@
 pub(crate) trait ARM {
     fn decode(&mut self, opcode: u32);
 
+    fn reset(&mut self);
+
     // ALU Logic
     //AND{cond}{S} Rd,Rn,Op2    ;AND logical       Rd = Rn AND Op2
     fn logical_and(&mut self, rd: usize, rn: usize, op2: u32);

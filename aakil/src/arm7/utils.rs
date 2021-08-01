@@ -8,11 +8,11 @@ pub(crate) struct Cpsr {
     pub zero: bool,       // Z
     pub carry: bool,      // C
     pub overflow: bool,   // V
-    pub reserved: B21,    // Reserved
+    pub reserved: B20,    // Reserved
     pub irq_mask: bool,   // I
-    pub firq_mask: bool,  // F
+    pub fiq_mask: bool,   // F
     pub thumb_mode: bool, // T
-    pub mode: B4,
+    pub mode: B5,
 }
 
 impl Cpsr {

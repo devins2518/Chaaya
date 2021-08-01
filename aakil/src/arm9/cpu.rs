@@ -13,7 +13,7 @@ pub(crate) struct Arm9 {
     endianness: Endianness,
     mode: Mode,
     gp_registers: [Register; 31],
-    program_registers: [Cpsr; 7],
+    program_registers: [Cpsr; 6],
     cp15: Cp15,
 }
 
@@ -25,7 +25,7 @@ impl Arm9 {
             endianness: Endianness::Little,
             mode: Mode::User,
             gp_registers: [Register::new(0); 31],
-            program_registers: [Cpsr::default(); 7],
+            program_registers: [Cpsr::default(); 6],
             cp15: Cp15::new(),
         }
     }
