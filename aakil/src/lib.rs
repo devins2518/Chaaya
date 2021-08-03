@@ -7,7 +7,5 @@ mod arm9;
 mod utils;
 
 mod cpu;
-#[cfg(feature = "ds")]
 pub use cpu::DSCpu;
-#[cfg(feature = "gba")]
 pub use cpu::GBACpu;

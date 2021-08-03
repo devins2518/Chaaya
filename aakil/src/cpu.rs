@@ -8,7 +8,6 @@ pub struct DSCpu {
     arm9: Arm9,
 }
 
-#[cfg(feature = "gba")]
 pub struct GBACpu {
     arm7: Arm7,
 }

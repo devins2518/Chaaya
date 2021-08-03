@@ -20,6 +20,8 @@ pub(crate) trait ARM {
     fn sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32);
     ////RSC{cond}{S} Rd,Rn,Op2 ;* ;sub cy. reversed  Rd = Op2-Rn+Cy-1
     fn rev_sub_with_carry(&mut self, rn: usize, rd: usize, op2: u32);
+
+    fn branch(&mut self, addr: u32) {}
     ////TST{cond}{P}    Rn,Op2    ;test            Void = Rn AND Op2
     //fn test_and(&mut self, rn: usize, op2: u32);
     ////TEQ{cond}{P}    Rn,Op2    ;test exclusive  Void = Rn XOR Op2

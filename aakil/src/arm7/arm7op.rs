@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 use super::cpu::*;
 use crate::utils::registers::*;
-use crate::utils::Mode;
 use crate::ARM_TRAIT;
 
 impl Arm7 {
@@ -11,8 +10,13 @@ impl Arm7 {
 impl ARM_TRAIT for Arm7 {
     fn decode(&mut self, opcode: u32) {
         if self.program_registers[0].parse_condition_code(opcode) {
-            #[cfg(debug_assertions)]
-            println!("opcode {:#04b}", opcode);
+            match opcode >> 24 {
+                0x0 => println!("Multiply or multiply long"),
+                0x1 => println!("SDS or BLE"),
+                0xE => println!("Coprocessor instruction, probably noop"),
+                0xF => println!("Software interrupt"),
+                _ => unimplemented!(),
+            }
         }
     }
 
@@ -26,9 +30,25 @@ impl ARM_TRAIT for Arm7 {
         *self.gp_registers[R15PC] = 0x00;
     }
 
+    // Wrong
+    fn add_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
+        *self.gp_registers[rd] =
+            *self.gp_registers[rn] + op2 + self.program_registers[0].carry() as u32;
+    }
+
+    fn add(&mut self, rd: usize, rn: usize, op2: u32) {
+        let (val, wrap) = self.gp_registers[rn].overflowing_add(op2);
+        *self.gp_registers[rd] = val;
+        if wrap {
+            self.program_registers[0].set_overflow(true);
+        }
+    }
+
     fn logical_and(&mut self, rd: usize, rn: usize, op2: u32) {
         *self.gp_registers[rd] = *self.gp_registers[rn] & op2;
     }
+
+    fn branch(&mut self, addr: u32) {}
 
     fn logical_xor(&mut self, rd: usize, rn: usize, op2: u32) {
         *self.gp_registers[rd] = *self.gp_registers[rn] ^ op2;
@@ -48,20 +68,6 @@ impl ARM_TRAIT for Arm7 {
         if wrap {
             self.program_registers[0].set_overflow(true);
         }
-    }
-
-    fn add(&mut self, rd: usize, rn: usize, op2: u32) {
-        let (val, wrap) = self.gp_registers[rn].overflowing_add(op2);
-        *self.gp_registers[rd] = val;
-        if wrap {
-            self.program_registers[0].set_overflow(true);
-        }
-    }
-
-    // Wrong
-    fn add_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
-        *self.gp_registers[rd] =
-            *self.gp_registers[rn] + op2 + self.program_registers[0].carry() as u32;
     }
 
     fn sub_with_carry(&mut self, rd: usize, rn: usize, op2: u32) {
