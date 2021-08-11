@@ -1,9 +1,7 @@
 #![allow(dead_code, unused_variables)]
-// TODO: Remove
-
 use std::sync::{Arc, Mutex};
 
-use crate::memory::{DataType, Memory};
+use crate::memory::Memory;
 
 struct Arm9Bus {
     itcm: Arc<Mutex<Vec<u8>>>,
@@ -71,7 +69,7 @@ impl Memory for Arm9Bus {
     fn read_byte(&self, address: u32) -> u8 {
         unimplemented!()
     }
-    fn write(&self, address: u32, value: DataType) {
+    fn write(&self, address: u32, value: &[u8]) {
         unimplemented!()
     }
 }
